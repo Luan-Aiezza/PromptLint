@@ -129,6 +129,110 @@ swift run promptlint check file.md --json
 
 Combine `--json` with `--fix`: if there's no file to write to (stdin), the fixed text comes back in the `fix.fixedText` field.
 
+## Shell integration (optional)
+
+This isn't part of the package — it's a `zsh` function you can add to your own `~/.zshrc` to have PromptLint automatically review one-shot prompts before they reach the `claude` CLI (Claude Code). It's not something you install by running a script; you copy the block below and adjust one path.
+
+```bash
+git clone https://github.com/Luan-Aiezza/PromptLint.git
+cd PromptLint
+swift build -c release   # a release build starts faster than `swift run` on every call
+```
+
+Then add this to `~/.zshrc`, replacing `/path/to/PromptLint` with wherever you cloned the repo:
+
+```bash
+# >>> PromptLint wrapper for the `claude` command >>>
+# Intercepts only one-shot invocations (`claude -p "..."` or piped stdin)
+# to run the prompt through PromptLint before actually sending it.
+# Interactive sessions (running `claude` without -p) pass straight through,
+# no interception — there's no safe way to "lint" a REPL this way. To
+# disable: comment out/delete this block and run `source ~/.zshrc`.
+claude() {
+  local promptlint_bin="/path/to/PromptLint/.build/release/promptlint"
+  [[ -x "$promptlint_bin" ]] || promptlint_bin="/path/to/PromptLint/.build/debug/promptlint"
+
+  if [[ ! -x "$promptlint_bin" ]]; then
+    print -u2 -- "⚠️  promptlint not found at $promptlint_bin — calling claude directly, without linting."
+    command claude "$@"
+    return $?
+  fi
+
+  local -a args=("$@")
+  local prompt_index=-1
+  local i
+  for ((i = 1; i <= $#args; i++)); do
+    if [[ "${args[i]}" == "-p" || "${args[i]}" == "--print" ]]; then
+      if (( i + 1 <= $#args )); then
+        prompt_index=$((i + 1))
+      fi
+      break
+    fi
+  done
+
+  local prompt_text="" from_stdin=0
+  if (( prompt_index > 0 )); then
+    prompt_text="${args[prompt_index]}"
+  elif [[ ! -t 0 ]]; then
+    prompt_text="$(cat)"
+    from_stdin=1
+  fi
+
+  if [[ -z "$prompt_text" ]]; then
+    command claude "$@"
+    return $?
+  fi
+
+  local report
+  report="$("$promptlint_bin" check - <<< "$prompt_text")"
+
+  if [[ "$report" == *"No issues found."* ]]; then
+    if (( from_stdin )); then
+      print -r -- "$prompt_text" | command claude "${args[@]}"
+    else
+      command claude "${args[@]}"
+    fi
+    return $?
+  fi
+
+  print -- "── PromptLint ──"
+  print -- "$report"
+  print -- "────────────────"
+  print -n -- "Send anyway? [Enter]=yes  f=auto-fix  c=cancel: "
+
+  local answer
+  read -r answer < /dev/tty
+
+  case "$answer" in
+    f|F)
+      prompt_text="$("$promptlint_bin" fix - <<< "$prompt_text")"
+      print -- "(prompt automatically fixed before sending)"
+      ;;
+    c|C)
+      print -- "Cancelled."
+      return 1
+      ;;
+  esac
+
+  if (( prompt_index > 0 )); then
+    args[prompt_index]="$prompt_text"
+    command claude "${args[@]}"
+  else
+    print -r -- "$prompt_text" | command claude "${args[@]}"
+  fi
+}
+# <<< PromptLint wrapper for the `claude` command <<<
+```
+
+Reload your shell (`source ~/.zshrc`) and it's active:
+
+```bash
+claude -p "I would like you to please review this."
+```
+A clean prompt passes straight through with no prompt. One with findings shows the report and asks `[Enter]=yes  f=auto-fix  c=cancel`. If the `promptlint` binary can't be found at the configured path, it warns on stderr and falls back to calling `claude` directly — it never silently blocks your normal usage.
+
+**Known limitation:** since this reads confirmation from `/dev/tty`, it needs a real interactive terminal — it won't work unattended inside a script or CI pipeline (which is intentional: an automated pipeline shouldn't block waiting for a keypress).
+
 ## Known limitations
 
 - `redundant-instruction` uses lexical similarity (Jaccard) — it catches repetition with similar wording, not paraphrasing with entirely different words.
