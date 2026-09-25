@@ -8,7 +8,7 @@ final class PricingTableTests: XCTestCase {
     }
 
     func testReturnsNilForUnknownModel() {
-        let cost = PricingTable.inputCostUSD(forTokens: 1_000, model: "modelo-que-nao-existe")
+        let cost = PricingTable.inputCostUSD(forTokens: 1_000, model: "model-that-does-not-exist")
         XCTAssertNil(cost)
     }
 

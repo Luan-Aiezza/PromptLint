@@ -1,8 +1,8 @@
 import Foundation
 
-/// Abstrai onde o "último prompt desta sessão" é guardado, pra
-/// `DuplicateContextRule` poder comparar contra o turno anterior sem saber
-/// se o armazenamento é um arquivo, um banco, etc.
+/// Abstracts where "this session's last prompt" is stored, so
+/// `DuplicateContextRule` can compare against the previous turn without
+/// knowing whether the storage is a file, a database, etc.
 public protocol SessionStore {
     func loadLastPrompt(sessionID: String) throws -> String?
     func saveLastPrompt(sessionID: String, text: String) throws

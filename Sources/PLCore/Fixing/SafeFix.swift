@@ -1,10 +1,10 @@
 import Foundation
 
-/// Aplica automaticamente só as correções sem ambiguidade de significado:
-/// compactar um bloco JSON e remover um bloco idêntico a um já enviado no
-/// turno anterior. Reescrita de frases (filler, redundância) fica de fora de
-/// propósito — trocar palavras pode mudar o sentido, e isso exige revisão
-/// humana antes de aplicar.
+/// Automatically applies only the fixes that carry no ambiguity of meaning:
+/// compacting a JSON block and removing a block identical to one already
+/// sent before. Phrase rewrites (filler, redundancy) are deliberately left
+/// out — swapping words could change the meaning, and that requires human
+/// review before applying.
 public enum SafeFix {
     public static let ruleIDs: Set<String> = ["whitespace-json", "duplicate-context"]
 
@@ -12,9 +12,9 @@ public enum SafeFix {
         ruleIDs.contains(finding.ruleID)
     }
 
-    /// Reescreve o texto original aplicando as correções seguras encontradas.
-    /// Findings são aplicados de baixo para cima (por linha) para não invalidar
-    /// os índices de linha das correções ainda não aplicadas.
+    /// Rewrites the original text by applying the safe findings found.
+    /// Findings are applied bottom-to-top (by line) so applying one doesn't
+    /// invalidate the line indices of the ones not yet applied.
     public static func apply(_ findings: [Finding], to text: String) -> String {
         let safeFindings = findings
             .filter(isSafe)

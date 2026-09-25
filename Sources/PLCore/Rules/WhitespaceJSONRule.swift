@@ -1,7 +1,7 @@
 import Foundation
 
-/// Sinaliza blocos JSON "bonitos" (indentados) quando uma versão compacta
-/// representaria o mesmo conteúdo com menos tokens.
+/// Flags "pretty" (indented) JSON blocks when a compact version would
+/// represent the same content with fewer tokens.
 public struct WhitespaceJSONRule: LintRule {
     public let id = "whitespace-json"
 
@@ -22,7 +22,7 @@ public struct WhitespaceJSONRule: LintRule {
 
             findings.append(Finding(
                 ruleID: id,
-                message: "Bloco JSON com indentação/espaços desnecessários.",
+                message: "JSON block with unnecessary indentation/whitespace.",
                 lineRange: block.lineRange,
                 suggestedFix: compact,
                 estimatedTokenSavings: savings

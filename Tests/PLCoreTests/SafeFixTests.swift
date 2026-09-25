@@ -4,7 +4,7 @@ import XCTest
 final class SafeFixTests: XCTestCase {
     func testCompactsWhitespaceJSONBlock() {
         let text = """
-        Analise o payload abaixo.
+        Analyze the payload below.
 
         ```json
         {
@@ -22,19 +22,19 @@ final class SafeFixTests: XCTestCase {
     }
 
     func testRemovesDuplicateContextBlock() {
-        let previous = "Contexto fixo que não muda."
-        let current = "Contexto fixo que não muda.\n\nPergunta nova."
+        let previous = "Fixed context that doesn't change."
+        let current = "Fixed context that doesn't change.\n\nNew question."
         let document = PromptParser.parse(current)
         let findings = DuplicateContextRule(previousText: previous).check(document)
 
         let fixed = SafeFix.apply(findings, to: current)
 
-        XCTAssertFalse(fixed.contains("Contexto fixo que não muda."))
-        XCTAssertTrue(fixed.contains("Pergunta nova."))
+        XCTAssertFalse(fixed.contains("Fixed context that doesn't change."))
+        XCTAssertTrue(fixed.contains("New question."))
     }
 
     func testDoesNotTouchUnsafeFindings() {
-        let text = "Eu gostaria que você pudesse revisar isso."
+        let text = "I would like you to please review this."
         let document = PromptParser.parse(text)
         let findings = FillerPhraseRule().check(document)
 

@@ -6,26 +6,26 @@ import PLCore
 struct PromptLint: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "promptlint",
-        abstract: "Analisa prompts e sugere reduções de tokens.",
+        abstract: "Analyzes prompts and suggests token reductions.",
         subcommands: [Check.self, Fix.self],
         defaultSubcommand: Check.self
     )
 }
 
-/// Aplica as correções seguras e imprime só o texto resultante, sem
-/// relatório — pensado pra composição em scripts/wrappers de shell
-/// (ex: `texto=$(promptlint fix - <<< "$texto")`), não pra uso interativo.
-/// Só cobre regras que não dependem de sessão (hoje, `whitespace-json`);
-/// `duplicate-context` fica de fora porque exigiria também gerenciar o
-/// histórico de sessão aqui, o que remove a simplicidade que essa
-/// composição em uma linha depende.
+/// Applies the safe fixes and prints only the resulting text, with no
+/// report — meant for composition in scripts/shell wrappers (e.g.
+/// `text=$(promptlint fix - <<< "$text")`), not for interactive use. Only
+/// covers rules that don't depend on a session (today, `whitespace-json`);
+/// `duplicate-context` is left out because it would also require managing
+/// session history here, which would remove the simplicity this one-line
+/// composition relies on.
 struct Fix: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "fix",
-        abstract: "Aplica as correções seguras e imprime só o texto resultante (uso em scripts)."
+        abstract: "Applies the safe fixes and prints only the resulting text (for use in scripts)."
     )
 
-    @Argument(help: "Caminho do arquivo. Omita ou use '-' para ler da entrada padrão.")
+    @Argument(help: "Path to the file. Omit or use '-' to read from standard input.")
     var path: String?
 
     func run() throws {
@@ -40,28 +40,28 @@ struct Fix: ParsableCommand {
 struct Check: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "check",
-        abstract: "Analisa um arquivo (ou stdin) e reporta oportunidades de redução de tokens."
+        abstract: "Analyzes a file (or stdin) and reports token-reduction opportunities."
     )
 
-    @Argument(help: "Caminho do arquivo a analisar. Omita ou use '-' para ler da entrada padrão.")
+    @Argument(help: "Path to the file to analyze. Omit or use '-' to read from standard input.")
     var path: String?
 
-    @Flag(name: .long, help: "Usa a contagem exata da API (endpoint count_tokens) em vez da estimativa offline.")
+    @Flag(name: .long, help: "Uses the exact count from the API (count_tokens endpoint) instead of the offline estimate.")
     var exact = false
 
-    @Option(name: .long, help: "Modelo usado para a contagem exata (--exact) e para estimar custo em USD.")
+    @Option(name: .long, help: "Model used for exact counting (--exact) and to estimate cost in USD.")
     var model = "claude-sonnet-5"
 
-    @Option(name: .long, help: "Chave de API da Anthropic. Se omitida, usa a variável de ambiente ANTHROPIC_API_KEY.")
+    @Option(name: .long, help: "Anthropic API key. If omitted, falls back to the ANTHROPIC_API_KEY environment variable.")
     var apiKey: String?
 
-    @Option(name: .long, help: "Identificador de sessão de chat, para detectar contexto repetido entre turnos.")
+    @Option(name: .long, help: "Chat session identifier, used to detect repeated context across turns.")
     var session: String?
 
-    @Flag(name: .long, help: "Aplica automaticamente as correções seguras (JSON compactado, contexto duplicado removido).")
+    @Flag(name: .long, help: "Automatically applies the safe fixes (compacted JSON, duplicate context removed).")
     var fix = false
 
-    @Flag(name: .long, help: "Emite o relatório em JSON em vez de texto legível (útil para scripts/CI).")
+    @Flag(name: .long, help: "Emits the report as JSON instead of human-readable text (useful for scripts/CI).")
     var json = false
 
     func run() async throws {
@@ -91,9 +91,9 @@ struct Check: AsyncParsableCommand {
         }
     }
 
-    /// Calcula o texto corrigido e, se um arquivo de entrada foi informado
-    /// (não stdin), já grava a correção em disco. Não imprime nada — quem
-    /// chama decide o formato de saída (texto ou JSON).
+    /// Computes the fixed text and, if an input file was given (not stdin),
+    /// already writes the fix to disk. Prints nothing — the caller decides
+    /// the output format (text or JSON).
     private func applyFixIfNeeded(using findings: [Finding], originalText: String) throws -> JSONFixInfo {
         let fixedText = SafeFix.apply(findings, to: originalText)
         let safeCount = findings.filter(SafeFix.isSafe).count
@@ -114,13 +114,13 @@ struct Check: AsyncParsableCommand {
 
     private func printFixSummary(_ fixInfo: JSONFixInfo) {
         guard fixInfo.changed else {
-            print("\nNenhuma correção segura para aplicar automaticamente.")
+            print("\nNo safe fix to apply automatically.")
             return
         }
         if let writtenToFile = fixInfo.writtenToFile {
-            print("\n✅ \(fixInfo.safeFixCount) correção(ões) segura(s) aplicada(s) em \(writtenToFile).")
+            print("\n✅ \(fixInfo.safeFixCount) safe fix(es) applied to \(writtenToFile).")
         } else if let fixedText = fixInfo.fixedText {
-            print("\n--- Texto corrigido (\(fixInfo.safeFixCount) correção(ões) segura(s) aplicada(s)) ---")
+            print("\n--- Fixed text (\(fixInfo.safeFixCount) safe fix(es) applied) ---")
             print(fixedText)
         }
     }

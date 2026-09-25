@@ -3,8 +3,8 @@ import XCTest
 
 final class DuplicateContextRuleTests: XCTestCase {
     func testFlagsBlockRepeatedFromPreviousTurn() {
-        let previous = "Contexto do sistema que não muda entre turnos."
-        let current = PromptParser.parse("Contexto do sistema que não muda entre turnos.\n\nNova pergunta do usuário.")
+        let previous = "System context that doesn't change between turns."
+        let current = PromptParser.parse("System context that doesn't change between turns.\n\nNew question from the user.")
 
         let findings = DuplicateContextRule(previousText: previous).check(current)
 
@@ -13,14 +13,14 @@ final class DuplicateContextRuleTests: XCTestCase {
     }
 
     func testIgnoresWhenNoPreviousTurn() {
-        let current = PromptParser.parse("Qualquer prompt novo, sem sessão anterior.")
+        let current = PromptParser.parse("Any new prompt, with no previous session.")
         let findings = DuplicateContextRule(previousText: nil).check(current)
         XCTAssertTrue(findings.isEmpty)
     }
 
     func testIgnoresBlocksThatDidNotAppearBefore() {
-        let previous = "Bloco A."
-        let current = PromptParser.parse("Bloco totalmente diferente.")
+        let previous = "Block A."
+        let current = PromptParser.parse("A completely different block.")
         let findings = DuplicateContextRule(previousText: previous).check(current)
         XCTAssertTrue(findings.isEmpty)
     }

@@ -1,9 +1,9 @@
 import Foundation
 
-/// Decorator que memoiza a contagem por conteúdo exato do texto, para não
-/// bater na API repetidamente para o mesmo trecho durante uma sessão de
-/// lint iterativa. `actor` porque o cache é mutável e pode ser consultado
-/// concorrentemente.
+/// Decorator that memoizes the count by the text's exact content, to avoid
+/// hitting the API repeatedly for the same snippet during an iterative lint
+/// session. An `actor` because the cache is mutable and may be accessed
+/// concurrently.
 public actor CachingTokenCounter: TokenCounter {
     private let wrapped: TokenCounter
     private var cache: [String: Int] = [:]

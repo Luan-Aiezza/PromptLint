@@ -15,8 +15,8 @@ final class CachingTokenCounterTests: XCTestCase {
         let inner = CallCountingTokenCounter()
         let cache = CachingTokenCounter(wrapping: inner)
 
-        let first = try await cache.count("mesmo texto")
-        let second = try await cache.count("mesmo texto")
+        let first = try await cache.count("same text")
+        let second = try await cache.count("same text")
 
         XCTAssertEqual(first, second)
         let calls = await inner.callCount
@@ -27,8 +27,8 @@ final class CachingTokenCounterTests: XCTestCase {
         let inner = CallCountingTokenCounter()
         let cache = CachingTokenCounter(wrapping: inner)
 
-        _ = try await cache.count("texto a")
-        _ = try await cache.count("texto b")
+        _ = try await cache.count("text a")
+        _ = try await cache.count("text b")
 
         let calls = await inner.callCount
         XCTAssertEqual(calls, 2)

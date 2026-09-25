@@ -8,18 +8,18 @@ public enum AnthropicTokenCounterError: Error, CustomStringConvertible {
     public var description: String {
         switch self {
         case .missingAPIKey:
-            return "ANTHROPIC_API_KEY não foi definida. Exporte a variável de ambiente ou passe --api-key."
+            return "ANTHROPIC_API_KEY is not set. Export the environment variable or pass --api-key."
         case .invalidResponse:
-            return "Resposta inesperada do endpoint count_tokens."
+            return "Unexpected response from the count_tokens endpoint."
         case .requestFailed(let statusCode, let body):
-            return "count_tokens falhou (HTTP \(statusCode)): \(body)"
+            return "count_tokens failed (HTTP \(statusCode)): \(body)"
         }
     }
 }
 
-/// Contagem exata via `POST /v1/messages/count_tokens`. Não usar tiktoken ou
-/// qualquer estimativa de outro provedor — o tokenizer da Anthropic não é
-/// público e diverge de outros BPEs, especialmente em código e não-inglês.
+/// Exact counting via `POST /v1/messages/count_tokens`. Do not use tiktoken
+/// or any other provider's estimate — Anthropic's tokenizer isn't public and
+/// diverges from other BPEs, especially on code and non-English text.
 public struct AnthropicTokenCounter: TokenCounter {
     private static let endpoint = URL(string: "https://api.anthropic.com/v1/messages/count_tokens")!
     private static let apiVersion = "2023-06-01"

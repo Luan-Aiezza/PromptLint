@@ -4,9 +4,9 @@ import XCTest
 final class RedundantInstructionRuleTests: XCTestCase {
     func testFlagsSimilarParagraphs() {
         let text = """
-        Por favor revise o código e aponte todos os bugs encontrados.
+        Please review the code and point out all the bugs you find.
 
-        Poderia revisar o código e apontar todos os bugs encontrados nele?
+        Could you review the code and point out all the bugs found in it?
         """
         let document = PromptParser.parse(text)
         let findings = RedundantInstructionRule(similarityThreshold: 0.4).check(document)
@@ -15,9 +15,9 @@ final class RedundantInstructionRuleTests: XCTestCase {
 
     func testIgnoresUnrelatedParagraphs() {
         let text = """
-        Revise o código e aponte bugs.
+        Review the code and point out bugs.
 
-        Explique como funciona o sistema de cache.
+        Explain how the caching system works.
         """
         let document = PromptParser.parse(text)
         let findings = RedundantInstructionRule().check(document)

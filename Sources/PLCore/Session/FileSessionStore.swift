@@ -1,9 +1,9 @@
 import Foundation
 
-/// Guarda, por sessão, só o último prompt enviado — o suficiente pra
-/// `DuplicateContextRule` comparar contra o turno anterior. Um arquivo texto
-/// por sessão em `~/.promptlint/sessions/<id>.txt`; não precisa de um banco
-/// porque não há histórico multi-turno a consultar, só o turno mais recente.
+/// Stores, per session, only the last prompt sent — enough for
+/// `DuplicateContextRule` to compare against the previous turn. One text
+/// file per session under `~/.promptlint/sessions/<id>.txt`; no database
+/// needed since there's no multi-turn history to query, just the latest turn.
 public struct FileSessionStore: SessionStore {
     private let directory: URL
 

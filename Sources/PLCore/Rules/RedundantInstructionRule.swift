@@ -1,7 +1,7 @@
 import Foundation
 
-/// Compara parágrafos entre si (similaridade de Jaccard sobre palavras) para
-/// achar instruções repetidas dentro do mesmo prompt.
+/// Compares paragraphs against each other (Jaccard word similarity) to find
+/// repeated instructions within the same prompt.
 public struct RedundantInstructionRule: LintRule {
     public let id = "redundant-instruction"
     private let similarityThreshold: Double
@@ -29,7 +29,7 @@ public struct RedundantInstructionRule: LintRule {
                 let firstRange = paragraphs[i].lineRange
                 findings.append(Finding(
                     ruleID: id,
-                    message: "Instrução parecida com o bloco nas linhas \(firstRange.lowerBound)-\(firstRange.upperBound) (similaridade \(Int(similarity * 100))%).",
+                    message: "Instruction similar to the block on lines \(firstRange.lowerBound)-\(firstRange.upperBound) (similarity \(Int(similarity * 100))%).",
                     lineRange: paragraphs[j].lineRange,
                     estimatedTokenSavings: savings
                 ))

@@ -1,11 +1,11 @@
 import Foundation
 
-/// Compara os blocos do prompt atual contra o prompt anterior da mesma
-/// sessão (carregado pela CLI e injetado aqui) para achar contexto repetido
-/// entre turnos — o caso mais valioso de economia em apps de chat, já que
-/// reenviar o mesmo bloco de sistema/contexto a cada turno cobra tokens de
-/// novo. Comparação é por igualdade exata de bloco, não similaridade — um
-/// bloco reenviado palavra por palavra é o caso claro e sem falso positivo.
+/// Compares the current prompt's blocks against the previous prompt of the
+/// same session (loaded by the CLI and injected here) to find repeated
+/// context across turns — the most valuable savings case in chat apps,
+/// since resending the same system/context block every turn costs tokens
+/// all over again. Comparison is exact block equality, not similarity — a
+/// block resent word-for-word is the clear, false-positive-free case.
 public struct DuplicateContextRule: LintRule {
     public let id = "duplicate-context"
     private let previousBlockTexts: Set<String>
@@ -26,7 +26,7 @@ public struct DuplicateContextRule: LintRule {
             guard previousBlockTexts.contains(block.text) else { continue }
             findings.append(Finding(
                 ruleID: id,
-                message: "Bloco idêntico a um já enviado no turno anterior desta sessão.",
+                message: "Block identical to one already sent in the previous turn of this session.",
                 lineRange: block.lineRange,
                 estimatedTokenSavings: HeuristicTokenCounter.estimate(block.text)
             ))

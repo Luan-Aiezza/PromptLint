@@ -1,8 +1,8 @@
 import Foundation
 
-/// Divide um prompt em blocos (parágrafos, itens de lista, código, JSON),
-/// preservando a linha de origem de cada trecho para que regras e relatórios
-/// possam apontar a localização exata do problema.
+/// Splits a prompt into blocks (paragraphs, list items, code, JSON),
+/// preserving the source line range of each piece so rules and reports
+/// can point at the exact location of an issue.
 public enum PromptParser {
     public static func parse(_ raw: String) -> PromptDocument {
         let lines = raw.components(separatedBy: "\n")
@@ -44,7 +44,7 @@ public enum PromptParser {
                     : .codeBlock(language: language.isEmpty ? nil : language)
                 blocks.append(Block(kind: kind, text: codeText, lineRange: codeStart...max(codeStart, codeEnd)))
 
-                if index < lines.count { index += 1 } // pula a cerca de fechamento ```
+                if index < lines.count { index += 1 } // skip the closing ``` fence
                 paragraphStart = index + 1
                 continue
             }

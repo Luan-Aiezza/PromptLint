@@ -3,7 +3,7 @@ import XCTest
 
 final class PromptParserTests: XCTestCase {
     func testSplitsParagraphs() {
-        let text = "Primeiro parágrafo.\n\nSegundo parágrafo."
+        let text = "First paragraph.\n\nSecond paragraph."
         let document = PromptParser.parse(text)
         XCTAssertEqual(document.blocks.count, 2)
         XCTAssertEqual(document.blocks[0].kind, .paragraph)
@@ -11,7 +11,7 @@ final class PromptParserTests: XCTestCase {
     }
 
     func testDetectsListItem() {
-        let text = "- primeiro item\n- segundo item"
+        let text = "- first item\n- second item"
         let document = PromptParser.parse(text)
         XCTAssertEqual(document.blocks.count, 1)
         XCTAssertEqual(document.blocks[0].kind, .listItem)

@@ -1,9 +1,9 @@
 import Foundation
 
-/// Estimativa offline e instantânea, sem chamar a API. Não é o tokenizer
-/// real da Anthropic (que não é público) — serve para feedback rápido durante
-/// a edição/lint de regras. A contagem final do relatório deve usar
-/// `AnthropicTokenCounter` para um número exato.
+/// Offline, instant estimate, with no API call. This is not Anthropic's
+/// real tokenizer (which isn't public) — it exists for fast feedback while
+/// editing/linting rules. The report's final count should use
+/// `AnthropicTokenCounter` for an exact number.
 public struct HeuristicTokenCounter: TokenCounter {
     public init() {}
 
@@ -11,12 +11,12 @@ public struct HeuristicTokenCounter: TokenCounter {
         Self.estimate(text)
     }
 
-    /// Varre o texto caractere a caractere: pontuação/símbolos contam como
-    /// token próprio (como um BPE real costuma isolar), palavras quebram em
-    /// ~4 caracteres por token, e espaços em branco são tratados como um
-    /// separador único (grátis) só quando isolados — sequências (indentação,
-    /// múltiplas linhas em branco) custam tokens de verdade, o que é o que
-    /// permite detectar economia real ao compactar JSON/whitespace.
+    /// Scans the text character by character: punctuation/symbols each count
+    /// as their own token (the way a real BPE tends to isolate them), words
+    /// break down at ~4 characters per token, and whitespace is treated as a
+    /// single (free) separator only when isolated — runs of it (indentation,
+    /// multiple blank lines) cost real tokens, which is what lets the tool
+    /// detect real savings when compacting JSON/whitespace.
     public static func estimate(_ text: String) -> Int {
         guard !text.isEmpty else { return 0 }
 

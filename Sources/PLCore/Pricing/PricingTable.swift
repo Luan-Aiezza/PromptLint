@@ -5,9 +5,9 @@ public struct ModelPricing {
     public let outputPerMillionUSD: Double
 }
 
-/// Preços atuais da API da Anthropic (por milhão de tokens). Só o preço de
-/// entrada importa aqui, porque o que o PromptLint estima é custo de prompt
-/// (tokens de entrada), não de resposta.
+/// Current Anthropic API prices (per million tokens). Only the input price
+/// matters here, since what PromptLint estimates is prompt cost (input
+/// tokens), not response cost.
 public enum PricingTable {
     public static let models: [String: ModelPricing] = [
         "claude-opus-5": ModelPricing(inputPerMillionUSD: 5, outputPerMillionUSD: 25),

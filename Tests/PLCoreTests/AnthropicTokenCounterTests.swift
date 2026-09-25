@@ -52,14 +52,14 @@ final class AnthropicTokenCounterTests: XCTestCase {
 
         do {
             _ = try await counter.count("qualquer texto")
-            XCTFail("Deveria lançar erro para status != 2xx")
+            XCTFail("Should throw an error for status != 2xx")
         } catch let error as AnthropicTokenCounterError {
             guard case .requestFailed(let statusCode, _) = error else {
-                return XCTFail("Erro inesperado: \(error)")
+                return XCTFail("Unexpected error: \(error)")
             }
             XCTAssertEqual(statusCode, 401)
         } catch {
-            XCTFail("Tipo de erro inesperado: \(error)")
+            XCTFail("Unexpected error type: \(error)")
         }
     }
 }

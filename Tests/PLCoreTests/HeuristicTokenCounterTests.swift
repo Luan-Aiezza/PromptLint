@@ -7,13 +7,13 @@ final class HeuristicTokenCounterTests: XCTestCase {
     }
 
     func testPunctuationCountsAsOwnToken() {
-        let withoutPunctuation = HeuristicTokenCounter.estimate("ola mundo")
-        let withPunctuation = HeuristicTokenCounter.estimate("ola, mundo!")
+        let withoutPunctuation = HeuristicTokenCounter.estimate("hello world")
+        let withPunctuation = HeuristicTokenCounter.estimate("hello, world!")
         XCTAssertEqual(withPunctuation, withoutPunctuation + 2)
     }
 
     func testLongWordCostsMoreThanShortWord() {
-        let short = HeuristicTokenCounter.estimate("oi")
+        let short = HeuristicTokenCounter.estimate("hi")
         let long = HeuristicTokenCounter.estimate("supercalifragilisticexpialidocious")
         XCTAssertGreaterThan(long, short)
     }

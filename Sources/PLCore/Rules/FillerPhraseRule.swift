@@ -1,7 +1,7 @@
 import Foundation
 
-/// Detecta frases de enchimento comuns (PT-BR e EN) que não agregam
-/// significado à instrução, mas custam tokens.
+/// Detects common filler phrases (PT-BR and EN) that add no meaning to the
+/// instruction but still cost tokens.
 public struct FillerPhraseRule: LintRule {
     public let id = "filler-phrase"
 
@@ -29,10 +29,10 @@ public struct FillerPhraseRule: LintRule {
                 }
                 let matched = String(block.text[range])
                 let savings = max(HeuristicTokenCounter.estimate(matched) - HeuristicTokenCounter.estimate(suggestion), 0)
-                let messageSuffix = suggestion.isEmpty ? "" : " → sugestão: \"\(suggestion)\""
+                let messageSuffix = suggestion.isEmpty ? "" : " → suggestion: \"\(suggestion)\""
                 findings.append(Finding(
                     ruleID: id,
-                    message: "Frase de enchimento: \"\(matched)\"\(messageSuffix)",
+                    message: "Filler phrase: \"\(matched)\"\(messageSuffix)",
                     lineRange: block.lineRange,
                     suggestedFix: suggestion.isEmpty ? nil : suggestion,
                     estimatedTokenSavings: savings

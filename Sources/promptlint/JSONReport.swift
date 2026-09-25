@@ -1,9 +1,9 @@
 import Foundation
 import PLCore
 
-/// Representação serializável do relatório, pra consumo por scripts/CI via
-/// `--json`. Fica na CLI (não em PLCore) porque é um formato de saída
-/// específico deste consumidor, não parte do domínio do linter.
+/// Serializable representation of the report, for consumption by scripts/CI
+/// via `--json`. Lives in the CLI (not in PLCore) because it's a
+/// consumer-specific output format, not part of the linter's domain.
 struct JSONFinding: Encodable {
     let ruleID: String
     let message: String

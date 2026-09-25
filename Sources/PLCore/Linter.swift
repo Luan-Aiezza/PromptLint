@@ -1,7 +1,7 @@
 import Foundation
 
-/// Ponto de entrada da biblioteca: junta parsing, regras e contagem de
-/// tokens num único fluxo. A CLI (alvo `promptlint`) só chama isto.
+/// The library's entry point: ties parsing, rules, and token counting
+/// together into a single pipeline. The CLI (`promptlint` target) just calls this.
 public struct Linter {
     private let rules: [LintRule]
     private let tokenCounter: TokenCounter
