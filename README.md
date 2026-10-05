@@ -4,6 +4,25 @@ A Swift CLI that analyzes a prompt before you send it to an LLM and points out w
 
 Runs 100% locally by default: no API calls, no API key required.
 
+![Swift](https://img.shields.io/badge/Swift-F05138?style=for-the-badge&logo=swift&logoColor=white) ![macOS](https://img.shields.io/badge/macOS-13%2B-000000?style=for-the-badge&logo=apple&logoColor=white) ![CLI](https://img.shields.io/badge/CLI-swift--argument--parser-007AFF?style=for-the-badge&logo=swift&logoColor=white) ![Anthropic](https://img.shields.io/badge/Anthropic-API-D97757?style=for-the-badge&logo=anthropic&logoColor=white)
+
+## Features
+
+- **Prompt analysis:** flags filler phrases (EN and PT-BR), repeated instructions, wasteful JSON formatting and context resent between turns.
+- **Savings estimate:** shows tokens and US$ per model, before and after the suggested changes.
+- **Exact counts (optional):** uses the Anthropic token counting API with `--exact`.
+- **Safe auto-fix:** `--fix` and the `fix` subcommand only apply changes that cannot alter meaning.
+- **Chat sessions:** remembers the last prompt of a session to catch duplicate context.
+- **Scriptable:** JSON output for CI, and an optional `zsh` wrapper for the `claude` CLI.
+
+## Requirements
+
+- macOS 13 or later
+- Swift 5.10 or later (Xcode or the Swift toolchain)
+- An Anthropic API key, only if you use `--exact`
+
+The package exposes two products: the `promptlint` executable and the `PLCore` library (parsing, rules, token counting, sessions, pricing and fixing), so you can reuse the engine in your own tools.
+
 ## Build
 
 ```bash
@@ -248,3 +267,7 @@ Sources/
 └── promptlint/          CLI (ArgumentParser)
 Tests/PLCoreTests/       34 unit tests
 ```
+
+## Author
+
+Created by [Luan Aiezza](https://github.com/Luan-Aiezza).
